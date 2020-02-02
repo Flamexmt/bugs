@@ -20,6 +20,7 @@ def get_detail(root,file,detailfile):
         print(url)
         response=requests.get(url,headers=headers)
         html_content=response.text
+        html_content=html_content.replace('javascript:;','')
         pattern_str = '<h1 class="detail-title" itemprop="name">(.*?)</h1>.*? .*?'
         pattern = re.compile(pattern_str, re.S)
         detail = re.findall(pattern, html_content)
@@ -30,11 +31,12 @@ def get_detail(root,file,detailfile):
         detailfile.write(',')
         detailfile.flush()
 
-        if ' target="_blank"><img itemprop="image""' in html_content:
-            pattern_str = '<a href="(.*?)" target="_blank"><img itemprop="image"'
+        if 'target="_blank"><img itemprop="image' in html_content:
+            pattern_str = 'target="_blank"><img itemprop="image" id="mainInmg" src="(.*?)"'
             pattern = re.compile(pattern_str, re.S)
             detail = re.findall(pattern, html_content)
             if len(detail)>0:
+                print(detail)
                 detailfile.write(detail[0])
             else:
                 detailfile.write('None')
